@@ -8,6 +8,7 @@ import random
 parser = argparse.ArgumentParser()
 parser.add_argument("file", type=str)
 parser.add_argument("-c", "--clock-speed", required=False, type=int, help="run at specified clock speed in hertz (type -1 for stepping)")
+parser.add_argument("-v", "--verbose", required=False, action="store_true", help="run in verbose mode")
 parser.add_argument("-d", "--debug", required=False, action="store_true", help="run in debug mode")
 args = parser.parse_args()
 colorama.init(autoreset=True)
@@ -217,8 +218,9 @@ try:
         for port in ports.ports:
             ports.ports[port].__pboot__()
     while True:
-        # Debug
-        print(end=f"┣╸Reading address {PrintUtils.pad_word(Registers.get_ip_word())}: {PrintUtils.pad_byte(Memory.get_ram_at(Registers.get_ip_word()))}", flush=True)
+        # Verbose / debug mode
+        if args.verbose or args.debug:
+            print(end=f"┣╸Reading address {PrintUtils.pad_word(Registers.get_ip_word())}: {PrintUtils.pad_byte(Memory.get_ram_at(Registers.get_ip_word()))}", flush=True)
 
         ai = 1
         match Memory.get_ram_at(Registers.get_ip_word()):
@@ -257,7 +259,7 @@ try:
                 Registers.d = Memory.get_ram_at(Bits.bytes_to_word((Memory.get_ram_at(Registers.get_ip_word()+1), Memory.get_ram_at(Registers.get_ip_word()+2))))
                 ai = 3
             case 0x09:
-                opcode = f"OUTA {PrintUtils.pad_byte(Registers.get_ip_word()+1)}"
+                opcode = f"OUTA {PrintUtils.pad_byte(Memory.get_ram_at(Registers.get_ip_word()+1))}"
                 if ports_present:
                     try:
                         ports.ports[Memory.get_ram_at(Registers.get_ip_word()+1)].port = Bits.get_byte(Registers.a)
@@ -363,7 +365,15 @@ try:
                 if not Registers.get_flag("CF"):
                     Registers.iph, Registers.ipl = Registers.a, Registers.b
                     ai = 0
-            
+            case 0x27:
+                opcode = f"QINA {PrintUtils.pad_byte(Memory.get_ram_at(Registers.get_ip_word()+1))}"
+                if ports_present:
+                    try:
+                        Registers.a = Bits.get_byte(ports.ports[Memory.get_ram_at(Registers.get_ip_word()+1)].port)
+                    except KeyError:
+                        Registers.a = random.randint(0x00, 0xFF)
+                ai = 2
+
             case 0xAA:
                 opcode = f"TAA"
                 Registers.a = Registers.a
@@ -412,11 +422,18 @@ try:
             case 0xDD:
                 opcode = f"TDD"
                 Registers.d = Registers.d
+
+            case 0xE0:
+                opcode = f"MOVA {PrintUtils.pad_word(Bits.bytes_to_word((Memory.get_ram_at(Registers.get_ip_word()+1), Memory.get_ram_at(Registers.get_ip_word()+2))))}"
+                Registers.a, Registers.b = (Memory.get_ram_at(Registers.get_ip_word()+1), Memory.get_ram_at(Registers.get_ip_word()+2))
+                ai = 3
                 
             case _:
                 opcode = f"???"
 
-        print(end=f" \"{opcode}\"\n", flush=True)
+        # Verbose / debug mode
+        if args.verbose or args.debug:
+            print(end=f" \"{opcode}\"\n", flush=True)
 
         # Debug mode
         if args.debug:
@@ -441,5 +458,6 @@ try:
         Registers.set_ip_word(Registers.get_ip_word()+ai)
         cycles += 1
 except KeyboardInterrupt:
+    print()
     Logs.info("program interrupted by user.")
     pass

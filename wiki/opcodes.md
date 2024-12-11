@@ -14,12 +14,12 @@
 | `0x07aaaa` | `C` = `[aaaa]` | `MOV C, [aaaa]` |
 | `0x08aaaa` | `D` = `[aaaa]` | `MOV D, [aaaa]` |
 
-## Port management
+## Port management 1
 
 | Opcode | Action | Equivalent in Assembly |
 |-|-|-|
-| `0x09aa` | `port(A)` = `aa` | `OUTA aa` |
-| `0x0Aaa` | `A` = `port(aa)` | `INA aa` |
+| `0x09aa` | `port(aa)` = `A` | `OUTA aa` |
+| `0x0Aaa` | `A` = `port(aa)`, `port(aa)` = `0x00` | `INA aa` |
 
 ## Jumps 1
 
@@ -64,6 +64,12 @@
 | `0x25` | `IP` = `A:B` if `CF == 1` else `IP` | `JC A:B` |
 | `0x26` | `IP` = `A:B` if `CF == 0` else `IP` | `JNC A:B` |
 
+## Port management 2
+
+| Opcode | Action | Equivalent in Assembly |
+|-|-|-|
+| `0x27` | `A` = `port(aa)` | `QINA aa` |
+
 ## Register management 2
 
 | Opcode | Action | Equivalent in Assembly |
@@ -78,3 +84,4 @@
 | `0xCC` | `C` = `C` | `TCC` |
 | `0xCD` | `C` = `D` | `TCD` |
 | `0xDD` | `D` = `D` | `TDD` |
+| `0xE0aabb` | `A` = `aa`, `B` = `bb` | `MOVA` |

@@ -43,6 +43,8 @@
     jc ab                   => 0x25
     jnc ab                  => 0x26
 
+    qina {value: i8}        => 0x27 @ value
+
     taa                     => 0xAA
     tab                     => 0xAB
     tac                     => 0xAC
