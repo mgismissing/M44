@@ -1,0 +1,3 @@
+#ruledef {
+    alu {code: u4}          => 0x1 @ code
+}

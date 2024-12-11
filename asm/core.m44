@@ -1,0 +1,62 @@
+#ruledef {
+    nop                     => 0x00
+
+    mov a, {value: i8}      => 0x01 @ value
+    mov b, {value: i8}      => 0x02 @ value
+    mov c, {value: i8}      => 0x03 @ value
+    mov d, {value: i8}      => 0x04 @ value
+    mov a, [{addr: u16}]    => 0x05 @ addr
+    mov b, [{addr: u16}]    => 0x06 @ addr
+    mov c, [{addr: u16}]    => 0x07 @ addr
+    mov d, [{addr: u16}]    => 0x08 @ addr
+
+    outa {value: i8}        => 0x09 @ value
+    ina {value: i8}         => 0x0A @ value
+
+    jmp {addr: u16}         => 0x0B @ addr
+    jmp ab                  => 0x0C
+    jz ab                   => 0x0D
+    jnz ab                  => 0x0E
+    je ab                   => 0x0F
+
+    and                     => 0x10
+    or                      => 0x11
+    xor                     => 0x12
+    not                     => 0x13
+    lsr                     => 0x14
+    lsl                     => 0x15
+    add                     => 0x16
+    sub                     => 0x17
+    mul                     => 0x18
+    div                     => 0x19
+    inca                    => 0x1A
+    incb                    => 0x1B
+    incc                    => 0x1C
+    incd                    => 0x1D
+    cmp a, b                => 0x1E
+
+    jne ab                  => 0x20
+    jg ab                   => 0x21
+    jle ab                  => 0x22
+    jge ab                  => 0x23
+    jl ab                   => 0x24
+    jc ab                   => 0x25
+    jnc ab                  => 0x26
+
+    taa                     => 0xAA
+    tab                     => 0xAB
+    tac                     => 0xAC
+    tad                     => 0xAD
+    tba                     => 0xBA
+    tbb                     => 0xBB
+    tbc                     => 0xBC
+    tbd                     => 0xBD
+    tca                     => 0xCA
+    tcb                     => 0xCB
+    tcc                     => 0xCC
+    tcd                     => 0xCD
+    tda                     => 0xDA
+    tdb                     => 0xDB
+    tdc                     => 0xDC
+    tdd                     => 0xDD
+}
